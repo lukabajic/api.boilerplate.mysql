@@ -28,4 +28,3 @@ const Role = db.define(
 );
 
 module.exports = Role;
-a
