@@ -1,20 +1,31 @@
-const mongoose = require('mongoose');
+const { db, DataTypes } = require('../mysql');
 
-const { Schema } = mongoose;
-
-const roleSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
+const Role = db.define(
+  'Role',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    number: {
+      type: DataTypes.INTEGER,
+      required: true,
+      unique: true,
+    },
   },
-  number: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
-});
-
-const Role = mongoose.model('role', roleSchema);
+  {
+    tableName: 'roles',
+    timestamps: true,
+    createdAt: 'created',
+    updatedAt: 'modified',
+  }
+);
 
 module.exports = Role;
+a

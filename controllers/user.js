@@ -1,10 +1,14 @@
+const bcrypt = require('bcryptjs');
+
 const User = require('../models/user');
 const { catchError, throwError } = require('../utils/errors');
 
 exports.create = async (req, res) => {
+  const { password, ...rest } = req.body;
   try {
-    const user = await new User(req.body).save();
-    if (!user) throwError('user_NOT_CREATED', 400);
+    const pw = await bcrypt.hash(password, 12);
+    const user = await User.create({ ...rest, password: pw });
+    if (!user) throwError('USER_NOT_CREATED', 400);
 
     res.status(200).json({
       statusCode: 200,
@@ -17,8 +21,8 @@ exports.create = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params.id });
-    if (!user) throwError('user_NOT_FOUND', 404);
+    const user = await User.findOne({ id: req.params.id });
+    if (!user) throwError('USER_NOT_FOUND', 404);
 
     res.status(200).json({
       statusCode: 200,
@@ -29,10 +33,10 @@ exports.get = async (req, res) => {
   }
 };
 
-exports.getAll = async (req, res) => {
+exports.getAll = async (_, res) => {
   try {
-    const users = await User.find();
-    if (!users) throwError('userS_NOT_FOUND', 404);
+    const users = await User.findAll();
+    if (!users) throwError('USERS_NOT_FOUND', 404);
 
     res.status(200).json({
       statusCode: 200,
@@ -45,10 +49,8 @@ exports.getAll = async (req, res) => {
 
 exports.edit = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params.id });
-    if (!user) throwError('user_NOT_FOUND', 404);
-    Object.assign(user, req.body);
-    await user.save();
+    const user = await User.update(req.body, { id: req.params.id });
+    if (!user) throwError('USER_NOT_FOUND', 404);
 
     res.status(200).json({
       statusCode: 200,
@@ -61,7 +63,7 @@ exports.edit = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    await User.deleteOne({ _id: req.params.id });
+    await User.destroy({ id: req.params.id });
 
     res.status(200).json({
       statusCode: 200,

@@ -1,29 +1,37 @@
-const mongoose = require('mongoose');
+const { db, DataTypes } = require('../mysql');
 
-const { Schema } = mongoose;
-
-const userSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
+const User = db.define(
+  'User',
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    role: {
+      type: DataTypes.INTEGER,
+      required: true,
+    },
   },
-  password: {
-    type: String,
-    required: false,
-    minlength: 8,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: Number,
-    required: true,
-  },
-});
-
-const User = mongoose.model('User', userSchema);
+  {
+    tableName: 'users',
+    timestamps: true,
+    createdAt: 'created',
+    updatedAt: 'modified',
+  }
+);
 
 module.exports = User;
