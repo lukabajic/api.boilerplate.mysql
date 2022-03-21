@@ -12,11 +12,9 @@ router.post(
   userController.create
 );
 
-router.get(
-  '/get/:id',
-  // isAuth, permissions(1, 2),
-  userController.get
-);
+router.get('/get/:id', isAuth, permissions(1, 2), userController.get);
+
+router.get('/get', isAuth, permissions(1, 2, 3, 4), userController.getMe);
 
 router.get(
   '/get-all',

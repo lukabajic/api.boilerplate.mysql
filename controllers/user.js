@@ -21,7 +21,21 @@ exports.create = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    const user = await User.findOne({ id: req.params.id });
+    const user = await User.findOne({ where: { id: req.params.id } });
+    if (!user) throwError('USER_NOT_FOUND', 404);
+
+    res.status(200).json({
+      statusCode: 200,
+      user,
+    });
+  } catch (err) {
+    catchError(res, err);
+  }
+};
+
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findOne({ where: { id: req.id } });
     if (!user) throwError('USER_NOT_FOUND', 404);
 
     res.status(200).json({
@@ -63,7 +77,7 @@ exports.edit = async (req, res) => {
 
 exports.delete = async (req, res) => {
   try {
-    await User.destroy({ id: req.params.id });
+    await User.destroy({ where: { id: req.params.id } });
 
     res.status(200).json({
       statusCode: 200,

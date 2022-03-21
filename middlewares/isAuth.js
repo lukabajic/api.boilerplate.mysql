@@ -4,7 +4,6 @@ const { catchError, throwError } = require('../utils/errors');
 const { jwtSecret } = require('../config');
 
 module.exports = (req, res, next) => {
-  console.log('here');
   try {
     const authHeader = req.get('Authorization');
     !authHeader && throwError('NOT_LOGGED_IN', 400);
@@ -15,8 +14,8 @@ module.exports = (req, res, next) => {
     const decodedToken = jwt.verify(token, jwtSecret);
 
     req.role = decodedToken.role;
-    req._id = decodedToken._id;
-
+    req.id = decodedToken.id;
+    
     next();
   } catch (err) {
     catchError(res, err);
